@@ -1,60 +1,21 @@
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import org.junit.Test;
+
+import java.util.function.Consumer;
 
 import static org.junit.Assert.assertTrue;
 
 public class MainTest {
 
     @Test
-    public void ItTestsStuff() throws Exception {
-        TestMain main = new TestMain();
+    public void itInitializesTheView() throws Exception {
+        Main main = new Main();
         StageAdapter stageAdapter = new TestStageAdapter();
-        ButtonAdapter buttonAdapter = new TestButtonAdapter();
-        main.setButtonAdapter(buttonAdapter);
+        boolean[] initialized = {false};
+        Consumer<StageAdapter> viewInitializer = stage -> initialized[0] = true;
+        main.startWithStageAdapter(stageAdapter, viewInitializer);
 
-        final boolean[] wasClicked = {false};
-        EventHandler<ActionEvent> eventHandler = e -> wasClicked[0] = true;
-        main.setEventHandler(eventHandler);
-        main.startWithStageAdapter(stageAdapter);
-
-        main.fireEvent();
-
-        assertTrue(wasClicked[0]);
-    }
-}
-
-class TestMain extends Main {
-
-    ButtonAdapter buttonAdapter;
-    private EventHandler<ActionEvent> eventHandler;
-
-    @Override
-    protected void setupDialog() {
-
-    }
-
-    public void setButtonAdapter(ButtonAdapter buttonAdapter) {
-        this.buttonAdapter = buttonAdapter;
-    }
-
-    @Override
-    protected ButtonAdapter getButtonAdapter() {
-        return buttonAdapter;
-    }
-
-    public void setEventHandler(EventHandler<ActionEvent> eventHandler) {
-        this.eventHandler = eventHandler;
-    }
-
-    @Override
-    protected EventHandler<ActionEvent> getEventHandler() {
-        return eventHandler;
-    }
-
-    public void fireEvent() {
-        getEventHandler().handle(new ActionEvent());
+        assertTrue("Should have initialized view", initialized[0]);
     }
 }
 
@@ -72,14 +33,6 @@ class TestStageAdapter implements StageAdapter {
 
     @Override
     public void setTitle(String s) {
-
-    }
-}
-
-class TestButtonAdapter implements ButtonAdapter {
-
-    @Override
-    public void setOnAction(EventHandler<ActionEvent> eventHandler) {
 
     }
 }
